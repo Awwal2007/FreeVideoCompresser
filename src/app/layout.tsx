@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script";
+import AdBanner from "@/components/AdBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -101,21 +102,21 @@ export default function RootLayout({
             <div className="max-w-[1200px] mx-auto w-full flex justify-center flex-1">
               {/* Left Ad Sidebar - Hidden on mobile */}
               <aside className="hidden lg:flex flex-col items-center w-[160px] shrink-0 pt-6 px-2">
-                <div className="w-full h-[600px] bg-muted/50 rounded flex items-center justify-center text-xs text-muted-foreground text-center p-4 border border-dashed border-muted">
-                  Skyscraper Ad
-                </div>
+                <AdBanner slot="left-skyscraper" format="skyscraper" />
               </aside>
 
               {/* Center Content Column */}
-              <main className="w-full max-w-[780px] min-w-0 px-4 sm:px-6 py-6">
-                {children}
+              <main className="w-full max-w-[780px] min-w-0 px-4 sm:px-6 py-6 flex flex-col items-center">
+                <AdBanner slot="top-leaderboard" format="leaderboard" className="mb-8" />
+                <div className="w-full">
+                  {children}
+                </div>
+                <AdBanner slot="bottom-leaderboard" format="leaderboard" className="mt-8" />
               </main>
 
               {/* Right Ad Sidebar - Hidden on mobile */}
               <aside className="hidden lg:flex flex-col items-center w-[160px] shrink-0 pt-6 px-2">
-                <div className="w-full h-[600px] bg-muted/50 rounded flex items-center justify-center text-xs text-muted-foreground text-center p-4 border border-dashed border-muted">
-                  Skyscraper Ad
-                </div>
+                <AdBanner slot="right-skyscraper" format="skyscraper" />
               </aside>
             </div>
             <Footer />
