@@ -60,47 +60,25 @@ export default function CompressImagePage() {
     }));
     setFiles(initialFiles);
 
-    // Upload files sequentially or in parallel
+    const { uploadFile } = await import('@/utils/upload');
+
+    // Upload files sequentially
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
-      const formData = new FormData();
-      formData.append('file', file);
 
       try {
-        const xhr = new XMLHttpRequest();
-        
-        const uploadPromise = new Promise<string>((resolve, reject) => {
-          xhr.upload.addEventListener('progress', (e) => {
-            if (e.lengthComputable) {
-              const percent = Math.round((e.loaded / e.total) * 100);
-              setFiles(prev => {
-                const updated = [...prev];
-                if (updated[i]) updated[i].progress = percent;
-                return updated;
-              });
-            }
+        const result = await uploadFile(file, (progress) => {
+          setFiles(prev => {
+            const updated = [...prev];
+            if (updated[i]) updated[i].progress = progress;
+            return updated;
           });
-
-          xhr.addEventListener('load', () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              const response = JSON.parse(xhr.responseText);
-              resolve(response.token);
-            } else {
-              reject(new Error(xhr.statusText || 'Upload failed'));
-            }
-          });
-
-          xhr.addEventListener('error', () => reject(new Error('Upload failed')));
         });
 
-        xhr.open('POST', `${API_URL}/api/upload`);
-        xhr.send(formData);
-
-        const token = await uploadPromise;
         setFiles(prev => {
           const updated = [...prev];
           if (updated[i]) {
-            updated[i].token = token;
+            updated[i].token = result.token;
             updated[i].status = 'uploaded';
           }
           return updated;

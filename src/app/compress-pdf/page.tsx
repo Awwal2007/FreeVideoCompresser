@@ -88,38 +88,14 @@ export default function CompressPdfPage() {
     });
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', selectedFile);
 
     try {
-      const xhr = new XMLHttpRequest();
-      
-      const uploadPromise = new Promise<string>((resolve, reject) => {
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            setSingleFile(prev => prev ? { ...prev, progress: percent } : null);
-          }
-        });
-
-        xhr.addEventListener('load', () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            const response = JSON.parse(xhr.responseText);
-            resolve(response.token);
-          } else {
-            reject(new Error(xhr.statusText || 'Upload failed'));
-          }
-        });
-
-        xhr.addEventListener('error', () => reject(new Error('Upload failed')));
+      const { uploadFile } = await import('@/utils/upload');
+      const result = await uploadFile(selectedFile, (progress) => {
+        setSingleFile(prev => prev ? { ...prev, progress } : null);
       });
-
-      xhr.open('POST', `${API_URL}/api/upload`);
-      xhr.send(formData);
-
-      const token = await uploadPromise;
-      setSingleFile(prev => prev ? { ...prev, token, status: 'uploaded' } : null);
-      checkEncryption(token, true);
+      setSingleFile(prev => prev ? { ...prev, token: result.token, status: 'uploaded' } : null);
+      checkEncryption(result.token, true);
     } catch (err: any) {
       setSingleFile(prev => prev ? { ...prev, status: 'failed' } : null);
       setError('Failed to upload PDF.');
@@ -142,52 +118,30 @@ export default function CompressPdfPage() {
     }));
     setMultipleFiles(initialFiles);
 
+    const { uploadFile } = await import('@/utils/upload');
+
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
-      const formData = new FormData();
-      formData.append('file', file);
 
       try {
-        const xhr = new XMLHttpRequest();
-        
-        const uploadPromise = new Promise<string>((resolve, reject) => {
-          xhr.upload.addEventListener('progress', (e) => {
-            if (e.lengthComputable) {
-              const percent = Math.round((e.loaded / e.total) * 100);
-              setMultipleFiles(prev => {
-                const updated = [...prev];
-                if (updated[i]) updated[i].progress = percent;
-                return updated;
-              });
-            }
+        const result = await uploadFile(file, (progress) => {
+          setMultipleFiles(prev => {
+            const updated = [...prev];
+            if (updated[i]) updated[i].progress = progress;
+            return updated;
           });
-
-          xhr.addEventListener('load', () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              const response = JSON.parse(xhr.responseText);
-              resolve(response.token);
-            } else {
-              reject(new Error(xhr.statusText || 'Upload failed'));
-            }
-          });
-
-          xhr.addEventListener('error', () => reject(new Error('Upload failed')));
         });
 
-        xhr.open('POST', `${API_URL}/api/upload`);
-        xhr.send(formData);
-
-        const token = await uploadPromise;
         setMultipleFiles(prev => {
           const updated = [...prev];
           if (updated[i]) {
-            updated[i].token = token;
+            updated[i].token = result.token;
             updated[i].status = 'uploaded';
           }
           return updated;
         });
         
-        checkEncryption(token, false);
+        checkEncryption(result.token, false);
       } catch (err: any) {
         setMultipleFiles(prev => {
           const updated = [...prev];

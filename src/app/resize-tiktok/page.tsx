@@ -52,37 +52,13 @@ export default function ResizeTiktokPage() {
     setUploadProgress(0);
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', selectedFile);
 
     try {
-      const xhr = new XMLHttpRequest();
-      
-      const uploadPromise = new Promise<string>((resolve, reject) => {
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            setUploadProgress(percent);
-          }
-        });
-
-        xhr.addEventListener('load', () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            const response = JSON.parse(xhr.responseText);
-            resolve(response.token);
-          } else {
-            reject(new Error(xhr.statusText || 'Upload failed'));
-          }
-        });
-
-        xhr.addEventListener('error', () => reject(new Error('Upload failed')));
+      const { uploadFile } = await import('@/utils/upload');
+      const result = await uploadFile(selectedFile, (progress) => {
+        setUploadProgress(progress);
       });
-
-      xhr.open('POST', `${API_URL}/api/upload`);
-      xhr.send(formData);
-
-      const token = await uploadPromise;
-      setVideoToken(token);
+      setVideoToken(result.token);
     } catch (err: any) {
       setError('Failed to upload video file.');
     } finally {
@@ -94,16 +70,10 @@ export default function ResizeTiktokPage() {
     setBgImageFile(selectedFile);
     setBgImageToken('');
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
     try {
-      const response = await fetch(`${API_URL}/api/upload`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
-      setBgImageToken(data.token);
+      const { uploadFile } = await import('@/utils/upload');
+      const result = await uploadFile(selectedFile, () => {});
+      setBgImageToken(result.token);
     } catch (e) {
       console.error(e);
       setError('Failed to upload background image.');
@@ -114,16 +84,10 @@ export default function ResizeTiktokPage() {
     setSubtitleFile(selectedFile);
     setSubtitleToken('');
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
     try {
-      const response = await fetch(`${API_URL}/api/upload`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
-      setSubtitleToken(data.token);
+      const { uploadFile } = await import('@/utils/upload');
+      const result = await uploadFile(selectedFile, () => {});
+      setSubtitleToken(result.token);
     } catch (e) {
       console.error(e);
       setError('Failed to upload subtitle file.');
