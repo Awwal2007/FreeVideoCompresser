@@ -13,22 +13,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://freefileconvert.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://freevidtools.com'),
   title: {
-    default: "Free Video Compressor & MP3 Converter Online | FreeFileConvert",
-    template: "%s | FreeFileConvert",
+    default: "FreeVidTools | Video Compressor & MP3 Converter",
+    template: "%s | FreeVidTools",
   },
-  description: "Free Online Video Compressor & MP3 Converter — No Sign-Up Required. Reduce video file size without losing quality (MP4, MOV, AVI, MKV, WEBM). Extract high-quality audio from any video instantly.",
+  description: "Free Online Video Compressor & MP3 Converter — No Sign-Up Required. Reduce video file size or extract audio instantly.",
   keywords: [
-    "free video compressor", 
-    "video to mp3", 
-    "online video converter", 
-    "reduce video size online free", 
-    "compress mp4 online", 
-    "extract audio from video", 
+    "free video compressor",
+    "video to mp3",
+    "online video converter",
+    "reduce video size online free",
+    "compress mp4 online",
+    "extract audio from video",
     "free online converter"
   ],
-  authors: [{ name: "FreeFileConvert" }],
   creator: "FreeFileConvert",
   publisher: "FreeFileConvert",
   formatDetection: {
@@ -37,20 +36,13 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Free Video Compressor & MP3 Converter Online",
-    description: "Free Online Video Compressor & MP3 Converter — No Sign-Up Required. Reduce video file size or extract audio in seconds.",
-    url: "https://freefileconvert.com",
-    siteName: "FreeFileConvert",
+    title: "FreeVidTools | Video Compressor & MP3 Converter",
+    description: "Free Online Video Compressor & MP3 Converter — No Sign-Up Required. Reduce video file size or extract audio instantly.",
+    url: process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://freevidtools.com',
+    siteName: "FreeVidTools",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: '/og-image.png', // You should create this image
-        width: 1200,
-        height: 630,
-        alt: 'FreeFileConvert - Video Tools',
-      },
-    ],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'FreeVidTools - Video Tools' }]
   },
   twitter: {
     card: 'summary_large_image',
