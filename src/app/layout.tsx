@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
-import Script from "next/script";
 import AdBanner from "@/components/AdBanner";
 
 const inter = Inter({
@@ -90,11 +89,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
-            <Script
+            <script
               async
               src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
               crossOrigin="anonymous"
-              strategy="afterInteractive"
             />
           )}
           <div className="min-h-screen flex flex-col bg-background text-foreground">
